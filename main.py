@@ -5,6 +5,10 @@ from flask import Flask, request
 
 app = Flask(__name__)
 
+host = 'cassandra-node'
+port = 9042
+keyspace = 'wikipedia-project'
+
 
 @app.route("/pages_by_domain", methods=['POST'])
 def get_domain_statistics():
@@ -14,7 +18,7 @@ def get_domain_statistics():
     last_hour = int(datetime.strftime(datetime.now(), "%H"))
     start_times = [i for i in range(last_hour - json_data['hours']-1, last_hour)]
 
-    client = CassandraClient()
+    client = CassandraClient(host, port, keyspace)
     client.connect()
 
     dom_data = client.select_distinct_domains()
@@ -50,7 +54,7 @@ def get_domain_bots_statistics():
                 "time_end": end_time_converted,
                 "statistics": []}
 
-    client = CassandraClient()
+    client = CassandraClient(host, port, keyspace)
     client.connect()
 
     dom_data = client.select_distinct_domains()
@@ -77,16 +81,101 @@ def get_top_20_users():
                 "time_end": end_time_converted,
                 "statistics": []}
 
-    client = CassandraClient()
+    client = CassandraClient(host, port, keyspace)
     client.connect()
 
     users = client.select_distinct_users()
     for user_id in users:
-        temp_data = client.select_domain_statistics(user_id,
-                                                    start_time_converted,
-                                                    end_time_converted)
+        temp_data = client.select_top_users(user_id,
+                                            start_time_converted,
+                                            end_time_converted)
         response["statistics"].append({"user_id": user_id,
-                                       "user_name": temp_data[0],
+                                       "user_name": "username",
+                                       "pages": temp_data[0]})
+
+    client.close()
+    return {"response": response}
+
+
+@app.route("/b_1", methods=['POST'])
+def get_b1():
+    json_data = request.get_json()
+
+    client = CassandraClient(host, port, keyspace)
+    client.connect()
+
+    domains = client.select_distinct_domains()
+
+    client.close()
+
+    return domains
+
+
+@app.route("/b_2", methods=['POST'])
+def get_b2():
+    json_data = request.get_json()
+
+    client = CassandraClient(host, port, keyspace)
+    client.connect()
+
+    pages = client.select_pages_for_user(json_data["user_id"])
+
+    client.close()
+
+    return pages
+
+
+@app.route("/b_3", methods=['POST'])
+def get_b3():
+    json_data = request.get_json()
+
+    client = CassandraClient(host, port, keyspace)
+    client.connect()
+
+    pages = client.select_amount_of_pages_for_domain(json_data["domain"])
+
+    client.close()
+
+    return pages
+
+
+@app.route("/b_4", methods=['POST'])
+def get_b4():
+    json_data = request.get_json()
+
+    client = CassandraClient(host, port, keyspace)
+    client.connect()
+
+    page = client.select_page(json_data["page_id"])
+
+    client.close()
+
+    return page
+
+
+@app.route("/b_5", methods=['POST'])
+def get_b5():
+    json_data = request.get_json()
+
+    current_time = datetime.now()
+
+    start_time_converted = current_time - timedelta(hours=json_data['hours'] + 1)
+    end_time_converted = current_time - timedelta(hours=json_data['hours'])
+
+    response = {"time_start": start_time_converted,
+                "time_end": end_time_converted,
+                "statistics": []}
+
+    client = CassandraClient(host, port, keyspace)
+    client.connect()
+
+    users = client.select_distinct_users()
+    for user_id in users:
+        temp_data = client.select_users(user_id,
+                                        start_time_converted,
+                                        end_time_converted)
+        response["statistics"].append({"user_id": user_id,
+                                       "user_name": "username",
                                        "pages": temp_data[0]})
 
     client.close()

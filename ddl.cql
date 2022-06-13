@@ -13,3 +13,9 @@ CREATE TABLE category_a
     PRIMARY KEY ((domain), time, user_id)
 );
 
+CREATE TABLE page_info
+(
+    page_id int,
+    page text,
+    PRIMARY KEY ((page_id))
+);

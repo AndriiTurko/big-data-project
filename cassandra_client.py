@@ -35,7 +35,7 @@ class CassandraClient:
         query = f"SELECT COUNT(domain) FROM category_a " \
                 f"WHERE domain = '{domain}' AND " \
                 f"creation_time >= '{start_time}' AND " \
-                f"creation_time <= '{end_time}"
+                f"creation_time <= '{end_time}';"
 
         data = self.execute(query)
 
@@ -44,7 +44,7 @@ class CassandraClient:
     def select_bot_statistics(self, domain):
         query = f"SELECT COUNT(domain) FROM category_a " \
                 f"WHERE domain = '{domain}' AND " \
-                f"is_bot = true"
+                f"is_bot = true;"
 
         data = self.execute(query)
 
@@ -52,7 +52,7 @@ class CassandraClient:
 
     def select_pages_for_user(self, user_id):
         query = f"SELECT page FROM category_a " \
-                f"WHERE user_id = '{user_id}'"
+                f"WHERE user_id = '{user_id}';"
 
         data = self.execute(query)
 
@@ -63,14 +63,41 @@ class CassandraClient:
         data = self.execute(query)
         return data
 
-    def select_user_statistics(self, user_id, start_time, end_time):
+    def select_top_users(self, user_id, start_time, end_time):
         query = f"SELECT COUNT(user_id) FROM category_a " \
                 f"WHERE user_id = '{user_id}'" \
                 f"creation_time >= '{start_time}' AND " \
                 f"creation_time <= '{end_time}' " \
                 f"ORDER BY COUNT(user_id) DESC" \
-                f"LIMIT 20"
+                f"LIMIT 20;"
 
         data = self.execute(query)
 
         return data
+
+    def select_amount_of_pages_for_domain(self, domain):
+        query = f"SELECT COUNT(page) FROM category_a " \
+                f"WHERE user_id = '{domain}';"
+
+        data = self.execute(query)
+
+        return data
+
+    def select_page(self, page_id):
+        query = f"SELECT COUNT(page) FROM category_a " \
+                f"WHERE user_id = '{[page_id]}';"
+
+        data = self.execute(query)
+
+        return data
+
+    def select_users(self, user_id, start_time, end_time):
+        query = f"SELECT COUNT(user_id) FROM category_a " \
+                f"WHERE user_id = '{user_id}'" \
+                f"creation_time >= '{start_time}' AND " \
+                f"creation_time <= '{end_time}';"
+
+        data = self.execute(query)
+
+        return data
+
