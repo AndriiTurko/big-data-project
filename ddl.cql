@@ -10,7 +10,7 @@ CREATE TABLE category_a
     user_name text,
     page text,
     is_bot boolean,
-    PRIMARY KEY ((domain), time, user_id)
+    PRIMARY KEY ((domain), creation_time, user_id)
 );
 
 CREATE TABLE page_info

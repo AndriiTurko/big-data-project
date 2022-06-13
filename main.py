@@ -30,7 +30,7 @@ def get_domain_statistics():
                      "time_end": end_time_converted,
                      "statistics": []}
         for dom in dom_data:
-            temp_data = client.select_domain_statistics(dom,
+            temp_data = client.select_domain_statistics(dom[0],
                                                         start_time_converted,
                                                         end_time_converted)
             time_dict["statistics"].append(temp_data[0])
@@ -59,10 +59,10 @@ def get_domain_bots_statistics():
 
     dom_data = client.select_distinct_domains()
     for dom in dom_data:
-        temp_data = client.select_domain_statistics(json_data['domain'],
+        temp_data = client.select_domain_statistics(dom[0],
                                                     start_time_converted,
                                                     end_time_converted)
-        response["statistics"].append({"domain": dom, "created_by_bots": temp_data[0]})
+        response["statistics"].append({"domain": dom[0], "created_by_bots": temp_data[0]})
 
     client.close()
     return {"response": response}
@@ -86,11 +86,11 @@ def get_top_20_users():
 
     users = client.select_distinct_users()
     for user_id in users:
-        temp_data = client.select_top_users(user_id,
+        temp_data = client.select_top_users(user_id[0],
                                             start_time_converted,
                                             end_time_converted)
-        response["statistics"].append({"user_id": user_id,
-                                       "user_name": "username",
+        response["statistics"].append({"user_id": user_id[0],
+                                       "user_name": temp_data[1],
                                        "pages": temp_data[0]})
 
     client.close()
@@ -99,8 +99,6 @@ def get_top_20_users():
 
 @app.route("/b_1", methods=['POST'])
 def get_b1():
-    json_data = request.get_json()
-
     client = CassandraClient(host, port, keyspace)
     client.connect()
 
@@ -122,7 +120,7 @@ def get_b2():
 
     client.close()
 
-    return pages
+    return pages[0]
 
 
 @app.route("/b_3", methods=['POST'])
@@ -136,7 +134,7 @@ def get_b3():
 
     client.close()
 
-    return pages
+    return pages[0]
 
 
 @app.route("/b_4", methods=['POST'])
@@ -150,7 +148,7 @@ def get_b4():
 
     client.close()
 
-    return page
+    return page[0]
 
 
 @app.route("/b_5", methods=['POST'])
@@ -171,11 +169,11 @@ def get_b5():
 
     users = client.select_distinct_users()
     for user_id in users:
-        temp_data = client.select_users(user_id,
+        temp_data = client.select_users(user_id[0],
                                         start_time_converted,
                                         end_time_converted)
-        response["statistics"].append({"user_id": user_id,
-                                       "user_name": "username",
+        response["statistics"].append({"user_id": user_id[0],
+                                       "user_name": temp_data[1],
                                        "pages": temp_data[0]})
 
     client.close()

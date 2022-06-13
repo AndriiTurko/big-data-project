@@ -26,6 +26,12 @@ class CassandraClient:
                 f"'{data[6]}', '{data[7]}');"
         self.execute(query)
 
+    def insert_page_info(self, data):
+        query = f"INSERT INTO page_info " \
+                f"(page_id, page) " \
+                f"VALUES ('{data[0]}', '{data[1]}'"
+        self.execute(query)
+
     def select_distinct_domains(self):
         query = f"SELECT DISTINCT domain FROM category_a"
         data = self.execute(query)
@@ -64,7 +70,7 @@ class CassandraClient:
         return data
 
     def select_top_users(self, user_id, start_time, end_time):
-        query = f"SELECT COUNT(user_id) FROM category_a " \
+        query = f"SELECT COUNT(user_id), user_name FROM category_a " \
                 f"WHERE user_id = '{user_id}'" \
                 f"creation_time >= '{start_time}' AND " \
                 f"creation_time <= '{end_time}' " \

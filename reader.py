@@ -13,7 +13,10 @@ while True:
     last_hour = None
     added = 0
     for msg in consumer:
-        data = (msg.value['meta']['id'], msg.value['meta']['domain'], msg.value['meta']['creation_time'],
-                msg.value['meta']['user_id'], msg.value['meta']['user_name'], msg.value['meta']['page'],
-                msg.value['meta']['is_bot'])
-        client.insert_category_a(data)
+        a_data = (msg.value['meta']['id'], msg.value['meta']['domain'], msg.value['meta']['dt'],
+                  msg.value['performer']['user_id'], msg.value['meta']['user_text'],
+                  msg.value['page_title'], msg.value['meta']['user_is_bot'])
+        client.insert_category_a(a_data)
+
+        page_data = (msg.value['page_id'], msg.value['page_title'])
+        client.insert_page_info(page_data)
