@@ -1,0 +1,10 @@
+FROM python:3.9-slim
+
+RUN pip install --upgrade pip
+RUN pip install cassandra-driver
+RUN pip install kafka-python
+
+COPY ./cassandra_client.py .
+COPY ./reader.py .
+
+CMD ["python3", "reader.py"]
