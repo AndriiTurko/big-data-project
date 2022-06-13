@@ -58,6 +58,11 @@ class CassandraClient:
 
         return data
 
+    def select_distinct_users(self):
+        query = f"SELECT DISTINCT user_id FROM category_a"
+        data = self.execute(query)
+        return data
+
     def select_user_statistics(self, user_id, start_time, end_time):
         query = f"SELECT COUNT(user_id) FROM category_a " \
                 f"WHERE user_id = '{user_id}'" \
